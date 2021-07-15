@@ -1,0 +1,59 @@
+@use './variables' as variables; 
+
+div.icon-tool{
+    display:flex;
+    align-items:center;
+    position:relative;
+    &>div{
+        position:relative;
+        width:1.8rem;
+        margin:0px 0.3em;
+        height:1.8rem;
+        &:focus-within{
+            &>ul{
+                opacity:1;
+                pointer-events: all;
+            }
+        }
+        &>svg{
+            display:block;
+            font-size:1.8rem;
+            width:100%!important;
+            height:100%!important;
+            flex-shrink:0;
+            color:variables.$primary_color;
+            cursor:pointer;
+        }
+        &>ul{
+            position:absolute;
+            top:100%;
+            right:0px;
+            opacity:0;
+            pointer-events:none;
+            transition:opacity 0.3s ease-in;
+            padding-left:0px;
+            list-style:none;
+            border-radius:0.3em;
+            box-shadow:variables.$custom_box_shadow;
+            &>li{
+                padding:0.5em 0.5em;
+                font-size:0.9em;
+                min-width:fit-content;
+                white-space: nowrap;
+                font-weight:500;
+                cursor:pointer;
+                &:first-child{
+                    border-radius:0.5em 0.5em 0px 0px;
+                }
+                &:last-child{
+                    border-radius:0px 0px 0.5em 0.5em;
+                }
+                &:hover{
+                    background-color:variables.$black_color;
+                    color:white;
+                }
+            }
+        }
+    }
+    
+}

@@ -1,0 +1,71 @@
+@use './variables' as variables;
+div.dashboard-wrapper{
+    display:flex;
+    flex-grow:1;
+}
+div.left-nav{
+    flex-shrink:0;
+    padding:1em 2em;
+    background-color:variables.$gray_color;
+    padding-top:2em;
+    border-radius:0px 1em 0px 0px;
+    font-family:variables.$main_font;
+    margin-right:2em;
+    &>h2{
+        font-size:1em;
+        padding-bottom:0.2em;
+        border-bottom:1px solid lightgray;
+        font-weight:400;
+        margin-bottom:2em;
+    }
+    &>ul{
+        font-weight:500;
+        width:150px;
+        font-size:1.1em;
+        list-style:none;
+        padding-left:0px;
+        &>li{
+            margin-bottom:1.3em;
+            cursor:pointer;
+            &:hover{
+                font-weight:600;
+            }
+        }
+        &>li.selected{
+            font-weight:650;
+        }
+        &>li.last{
+            color:variables.$primary_color;
+            margin-top:1.5em;
+        }
+    }
+}
+
+div.date-container{
+    display:inline-flex;
+    height:fit-content;
+    align-items:center;
+    font-family: variables.$main_font;
+    &>svg{
+        font-size:2em;
+        color:variables.$primary_color;
+        margin:0px 0.5em;
+        cursor:pointer;
+    }
+    &>svg:last-child{
+        margin-left:1em;
+    }
+    &>div{
+        &>span{
+            font-size:1.3em;
+            display:inline-block;
+            margin-bottom:0.2em;
+        }
+        &>h1{
+            margin:0px;
+            font-size:2.1em;
+            font-weight:500;
+        }
+    }
+
+}

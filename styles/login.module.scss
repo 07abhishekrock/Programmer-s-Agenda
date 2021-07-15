@@ -1,0 +1,124 @@
+@use './variables' as variables;
+div.login-wrapper{
+    display:flex;
+    font-family:variables.$main_font;
+    &>div.login-window{
+        width:400px;
+        flex-grow:1;
+        background-image:url('../images/backgrounds/code_background.svg');
+        background-position:center;
+        background-size:cover;
+        flex-shrink:0;
+        display:grid;
+        align-content:center;
+        &>h1{
+            font-size:2.5rem;
+            &>i{
+                color:variables.$primary_color;
+                font-weight:800;
+            }
+            margin-bottom:0px;
+        }
+        &>span{
+            display:block;
+            font-size:1em;
+            color:#292929;
+            text-align:center;
+            margin:2em 0px;
+            margin-top:1em;
+        }
+        &>button{
+            background-color:variables.$black_color;
+            color:white;
+            justify-self: center;
+            border:0px;
+            border-radius:2em;
+            padding:0.5em 0.8em;
+            font-weight:600;
+            font-size:1.5em;
+            margin:2em 0px;
+            transition:padding 0.1s ease-in;
+            cursor:pointer;
+            &:hover{
+                padding:0.5em 1.3em;
+            }
+        }
+    }
+
+    &>div.left-feature-window-wrapper{
+
+        background-color:variables.$black_color;
+        overflow:hidden;
+        width:65%;
+        min-height:700px;
+        color:white;
+        height:100vh;
+        display:flex;
+        flex-flow:column;
+        justify-content:center;
+
+        &>div.left-feature-windows{
+            display:flex;
+            transition:transform 0.3s ease-in;
+
+            &>div.feature-window{
+                width:100%;
+                display:grid;
+                place-items:center;
+                flex-shrink:0;
+                padding:3em;
+                box-sizing: border-box;
+                &>h1{
+                    position:relative;
+                    font-size:3rem;
+                    text-align:center;
+                    padding:0.5em;
+                    font-weight:550;
+                    &[pseudo="0"]{
+                        &::after , &::before{
+                            content:none;
+                        }
+                    }
+                    &::after , &::before{
+                        font-weight:450;
+                        color:white;
+                    }
+                    &::after{
+                        position:absolute;
+                        content:"}";
+                        font-size:6rem;
+                        bottom:0px;
+                        right:0px;
+                        color:variables.$primary_color;
+                        transform:translate(0% , 100%);
+                    }
+                    &::before{
+                        position:absolute;
+                        top:0px;
+                        left:0px;
+                        transform:translate(-100% , -50%);
+                        content:"{";
+                        font-size:4rem;
+                    }
+                }
+            }
+
+        }
+        &>div.feature-slider{
+            display:flex;
+            margin:1em auto;
+            flex-shrink:0;
+            &>span{
+                width:1.5em;
+                height:1.5em;
+                border:2px solid white;
+                border-radius:50%;
+                margin:0px 0.5em;
+                &[select="1"]{
+                    border:none;
+                    background-color:white;
+                }
+            }
+        }
+    }
+}

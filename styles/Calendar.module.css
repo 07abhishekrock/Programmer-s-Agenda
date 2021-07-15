@@ -1,0 +1,98 @@
+div.calendar{
+    width:100%;
+    margin-top:1em;
+    display:flex;
+    flex-flow:column;
+  }
+  div.calendar>div.week-column{
+    width:100%;
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    text-align:center;
+    background-color:var(--primary-color);
+    font-size:0.9em;
+    padding:0.2em 0px;
+    border-radius:0.5em;
+    color:white;
+    align-items:center;
+    box-sizing:border-box;
+    justify-content:space-between;
+    margin-bottom:0.4em;
+  }
+  div.calendar>div.days{
+    width:100%;
+    display:grid;
+    grid-template-columns:repeat(7, 1fr);
+    height:100%;
+    font-size:0.8em;
+    height:16em;
+  }
+  div.calendar>div.days>span{
+    align-self:center;
+    justify-self:center;
+    height:70%;
+    width:80%;
+    text-align:center;
+    display:grid;
+    place-items:center;
+    border-radius:0.3em;
+    background-color:white;
+  }
+  div.calendar>div.days>span[chosen="1"]{
+    background:var(--primary-color);
+    color:white;
+  }
+  div.calendar>div.days>span[valid_date = "0"]{
+    background-color:transparent;
+  }
+  div.calendar>div.date-selected{
+    font-size:0.9em;
+    margin-top:2em;
+    padding:0px 0.3em;
+    display:flex;
+    align-items:center;
+  }
+  div.calendar>div.date-selected>span:first-child{
+    margin-right:1em;
+    letter-spacing:0.05em;
+  }
+  div.calendar>div.date-selected>span:last-child{
+    background-color:var(--primary-color);
+    padding:0.3em 1em;
+    color:white;
+    border-radius:0.2em;
+    letter-spacing:0.1em;
+  }
+  div.calendar>div.top-btn-group{
+    color:white;
+    margin-bottom:2em;
+    margin-top:1em;
+    display:flex;
+    width:100%;
+    justify-content:space-around;
+  }
+  div.calendar>div.top-btn-group>div{
+    border:0px solid black;
+    overflow:hidden;
+    background-color:var(--primary-color);
+    color:white;
+    font-weight:bold;
+    font-family:"Poppins", sans-serif;
+    letter-spacing:0.05em;
+    border-radius:3em;
+    display:flex;
+    align-items:center;
+    pointer-events:none;
+    padding:0px;
+  }
+  div.calendar>div.top-btn-group>div>span:first-child, div.calendar>div.top-btn-group>div>span:last-child{
+    display:inline-block;
+    pointer-events:all;
+    padding:0.1em 0.5em;
+    font-size:1.4em;
+    background-color:#0051AF;
+    border-radius:3em;
+  }
+  div.calendar>div.top-btn-group>div>span:nth-child(2){
+    padding:0px 1em;
+  }
