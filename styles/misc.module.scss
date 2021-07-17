@@ -34,6 +34,9 @@ div.icon-tool{
             padding-left:0px;
             list-style:none;
             border-radius:0.3em;
+            margin-top:0.5em;
+            background-color:white;
+            z-index:50;
             box-shadow:variables.$custom_box_shadow;
             &>li{
                 padding:0.5em 0.5em;

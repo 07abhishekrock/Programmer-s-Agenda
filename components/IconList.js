@@ -6,8 +6,8 @@ const IconList = (props)=>{
     let options_ref = useRef(null);
     return (
         <div className={styles['icon-tool']}>
-            {props.label ? <span>{props.label}</span> : <span></span>}
-            <div tabIndex={1}>
+            {props.label ? <span style={{fontWeight:props.fontWeight}}>{props.label}</span> : <span></span>}
+            <div tabIndex={1} style={{width:props.size , height:props.size}}>
                 <FontAwesomeIcon icon={props.icon}></FontAwesomeIcon>
                 <ul ref={options_ref} >
                     {props.children}
