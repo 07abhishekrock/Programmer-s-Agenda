@@ -1,21 +1,18 @@
-import { useEffect , useState } from "react";
 import DateSelector from "../components/DateSelector";
 import LeftNav from "../components/LeftNav";
 import ChangesBox from "../components/ChangesBox";
 import ProjectRoleBar from "../components/ProjectRoleBar";
 import ProjectOverview from "../components/ProjectOverview";
-import { supabase } from "../public/js/supabase";
 import styles from '../styles/dashboard.module.scss';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
+const jwt = require('jsonwebtoken');
+import { mySecretKey } from "./libs/githubAuth";
 
-export default function Home() {
-  let [user , setUser] = useState([]);
-  useEffect(async ()=>{
-    setUser(await supabase.auth.user()); 
-  },[])
+export default function Home(props) {
   return (
     <>
+    <span>{JSON.stringify(props.user)}</span>
       <div className={styles['dashboard-wrapper']}>
         <LeftNav/>
         <div className={styles['dashboard-inner']}>
@@ -37,4 +34,29 @@ export default function Home() {
       </div>
     </>
   )
+}
+
+export async function getServerSideProps(context){
+  try{
+    if(context.req.cookies && context.req.cookies.token){
+      const token = context.req.cookies.token;
+      const decoded = jwt.verify(token , mySecretKey);
+      return {
+        props : {
+          user : decoded
+        }
+      }
+    }
+    else{
+      throw Error('cookies not found')
+    }
+  }
+  catch(e){
+    return {
+        redirect: {
+          destination: '/login',
+          permanent: false,
+        },
+    }
+  }
 }

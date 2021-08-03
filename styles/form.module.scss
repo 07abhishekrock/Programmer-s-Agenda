@@ -1,0 +1,130 @@
+@use './variables' as variables;
+
+div.form-wrapper{
+    display:block;
+    font-family:variables.$main_font;
+    position:relative;
+    width:500px;
+    padding:2em;
+    margin:0 auto;
+    margin-top:4em;
+
+        &::after , &::before{
+            content:"";
+            position:absolute;
+            width:20%;
+            height:95%;
+            top:0px;
+            border:2px solid lightgray;
+            border-bottom:0px;
+            pointer-events:none;
+        }
+        &::after{
+            left:0px;
+            border-right:0px;
+            border-top-left-radius: 1em;
+        }
+        &::before{
+            right:0px;
+            border-left:0px;
+            border-top-right-radius: 1em;
+        }
+        &>h2{
+            font-size:2em;
+            text-align:center;
+        }
+        &>form.form{
+
+            margin-top:3em;
+
+            &>button{
+                width:100%;
+                border-radius:0.2em;
+                background-color:black;
+                color:white;
+                font-family: inherit;
+                margin-top:2em;
+                font-size:1.5em;
+                border:0px solid black;
+                padding:0.5em 0.5em;
+                display:block;
+                font-weight:500;
+            }
+
+            &>div.input-group{
+                font-size:1.2em;
+                margin-bottom:1.5em;
+                & i.error-footer{
+                    font-size:0.6em;
+                    margin-top:1em;
+                    font-style:normal;
+                    color:firebrick;
+                    display:none;
+                    &[error="1"]{
+                        display:block;
+                    }
+                }
+                &>label{
+                    font-weight:520;
+                    display:block;
+                    font-size:0.8em;
+                    margin-bottom:0.8em;
+                }
+                &>div.div-textarea{
+                    min-height:100px;
+                }
+                &>input , &>div.div-textarea{
+                    outline:none;
+                    font-size: inherit;
+                    display:block;
+                    width:100%;
+                    font-family:inherit;
+                    padding:0.3em 0.5em;
+                    box-sizing: border-box;
+                    border:2px solid lightgray;
+                    border-radius:0.1em;
+                    &[error="1"]{
+                        outline-color:red;
+                    }
+                    &:focus{
+                        border-color:black;
+                    }
+                }
+                &>div.radio-btn-option-wrapper{
+                    display:flex;
+                    &>div.radio-btn-option{
+                        &>input[type="radio"]{
+                            display:none;
+                            & + label{
+                                display:block;
+                                width:fit-content;
+                                border-radius:0.2em;
+                                padding:0.2em 0.5em;
+                                font-weight:550;
+                                font-size:0.8em;
+                                margin-right:0.5em;
+                                border:2px solid gray;
+                                color:gray;
+                                user-select:none;
+                                cursor:pointer;
+                            }
+                        &:hover + label{
+                            color:black;
+                            border-color:black;
+                        }
+                        &:checked + label{
+                            background-color:variables.$primary_color;
+                            color:white;
+                            border-color:variables.$primary_color;
+                        }
+                        &:focus + label{
+                            background-color:variables.$primary_color;
+                            color:white;
+                            border-color:variables.$primary_color;
+                        }
+                    }
+                }
+                }
+            }
+        }
+}
