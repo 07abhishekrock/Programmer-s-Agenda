@@ -34,3 +34,7 @@ a {
 * {
   box-sizing: border-box;
 }
+
+div.left-window-wrapper{
+  display:flex;
+}

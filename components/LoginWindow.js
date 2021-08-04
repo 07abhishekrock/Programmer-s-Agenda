@@ -2,9 +2,9 @@ import styles from '../styles/login.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGithub } from '@fortawesome/free-brands-svg-icons';
 import Router from 'next/router';
-import { clientId } from '../pages/libs/githubAuth';
+import { clientId } from '../libs/githubAuth';
 
-const LoginWindow = (props)=>{
+const LoginWindow = ()=>{
     return <div className={styles['login-window']}>
         <h1 className="main-logo">PROGRAMMER'S<br/><i>AGENDA</i></h1>
         <span>The ToDo For Programmers.</span>

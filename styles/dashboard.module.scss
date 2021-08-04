@@ -34,7 +34,7 @@ div.left-nav{
         &>li.selected{
             font-weight:650;
         }
-        &>li.last{
+        &>li:last-child{
             color:variables.$primary_color;
             margin-top:1.5em;
         }
