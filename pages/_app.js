@@ -8,7 +8,7 @@ function MyApp({ Component, pageProps }) {
   <div className="universal-wrapper">
     {pageProps.user ? <Navbar user={pageProps.user}/> : null}
     <div className="left-window-wrapper">
-      <LeftNav projects={pageProps.projects}/>
+      {pageProps.projects ? <LeftNav projects={pageProps.projects}/> : null}
       <Component {...pageProps} />
     </div>
   </div>

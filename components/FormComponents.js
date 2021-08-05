@@ -13,10 +13,48 @@ const FormContext = React.createContext();
 
 */
 
-const FormWrapper = (props)=>{
+function enableOrDisableBasedOnVisibleToggle(prevProps, prevState){
+    const [context , set_context] = this.context;
+    let visible = false;
+    if(this.props.visibleToggle){
+        const [keyName , optionValue] = this.props.visibleToggle;
+        if(context[keyName].value === optionValue){
+            visible = true; 
+        }
+        else{
+            visible = false;
+        }
+    }
+    else{
+        visible = true;
+    }
+    if(prevState.visible !== visible){
+        if(visible === false){
+            let obj = {};
+            switch(props.type){
+                case 'Array' : 
+                    obj[props.keyName] = {value : [] , error : null}
+                    break;
+                default : 
+                    obj[props.keyName] = {value : '' , error : null}
+                    break;
+            }
+            set_context({...context ,
+                ...obj
+            })
+        }
+        this.setState({
+            visible
+        });
+    }
+}
 
-    const [form_data , set_form_data] = useState({});
-    useEffect(()=>{
+
+
+class FormWrapper extends React.Component{
+
+    constructor(props){
+        super(props);
         let new_form_data = {};
         let children;
         if(!props.children.length){
@@ -26,9 +64,19 @@ const FormWrapper = (props)=>{
             children = Array.from(props.children);
         }
         children.map((child)=>{
+            let value = '';
+            const type = child.props.type || 'String';
+            switch(type){
+                case 'Array' : 
+                value = []
+                break;
+                default :
+                value = ''
+                break;
+            }
             if(child.props.keyName){
                 new_form_data[child.props.keyName] = {
-                    value : '',
+                    value : value,
                     errorString : child.props.isRequired === true ? 'This field is required' : null
                 };
             }
@@ -36,21 +84,30 @@ const FormWrapper = (props)=>{
                 console.error('you need to add a keyname prop so that it can be added to the form context');
             }
         })
-        set_form_data(new_form_data);
-    },[])
+        this.state = {form_data : new_form_data};
+    }
+    
+    set_form_data(new_value){
+        this.setState({...this.state , form_data : new_value});
+    }
 
-    return (
-        <form className={styles['form']}>
-            <FormContext.Provider value={[form_data , set_form_data]}>
-                {props.children}
+    render(){
+        return (
+            <form className={styles['form']} onSubmit={(e)=>{
+                e.preventDefault();
+            }}>
+            <FormContext.Provider value={[this.state.form_data , this.set_form_data.bind(this)]}>
+                {this.props.children}
                 <button>Let's get Started</button>
             </FormContext.Provider>
         </form>
     )
+    }
 }
 
 function combineFunctions(value , validityFunction ,...functions){
     for(const function_unit of functions){
+        console.log(function_unit);
         const [proceed , new_value] = function_unit(value);
         if(!proceed){
            return new_value; 
@@ -77,63 +134,64 @@ class FormComponent extends React.Component{
         }
     }
 
-   componentDidUpdate(prevProps , prevState){
-        const [context , set_context] = this.context;
-        let visible = false;
-        if(this.props.visibleToggle){
-            const [keyName , optionValue] = this.props.visibleToggle;
-            if(context[keyName].value === optionValue){
-                visible = true; 
-            }
-            else{
-                visible = false;
-            }
-        }
-        else{
-            visible = true;
-        }
-        if(prevState.visible !== visible){
-            this.setState({
-                visible
-            });
-        }
-   }
-    
+    componentDidUpdate(prevProps , prevState){
+        enableOrDisableBasedOnVisibleToggle.apply(this , [prevProps , prevState])
+    }
+
     fieldIsRequiredCheck(new_value){
         if(this.props.isRequired && this.props.isRequired === true){
-            if(new_value.trim() === ''){
+            if(new_value.length === 0 || (typeof new_value === 'string' && new_value.trim() === '')){
                 return [false , 'Empty Field is not allowed'];
             } 
         }
         return [true , new_value];
     }
 
+    fieldIsURLCheck(new_value){
+        if(this.props.isURL && this.props.isURL === true){
+            if(typeof new_value === 'string'){
+                let isURL = new_value.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g);
+                if(isURL !== null){
+                    return [true , new_value];
+                }
+            }
+            return [false , 'Invalid URL provided']
+        }
+        return [true , new_value]
+    }
+
+    readContextValue(){
+        const [context , set_context] = this.context;
+        const string = (context[this.props.keyName].value);
+        return string;
+    }
 
     changeValue(new_value){
         const [context , setContext] = this.context;
         let new_object = {...context};
+        const error_string = combineFunctions(new_value , this.props.validityChecker ? this.props.validityChecker.bind(this) : ()=>null , this.fieldIsRequiredCheck.bind(this) , this.fieldIsURLCheck.bind(this));
         if(!this.props.validityChecker){
             new_object[this.props.keyName] = {
-                errorString : null,
+                errorString : error_string,
                 value : new_value
             }
             setContext(new_object);
-            return;
-        }
-        const error_string = combineFunctions(new_value , this.props.validityChecker.bind(this) , this.fieldIsRequiredCheck.bind(this) );
-        if(error_string){
-            new_object[this.props.keyName]={
-                errorString : error_string,
-                value : new_value
-            };
         }
         else{
-            new_object[this.props.keyName]={
-                errorString : null,
-                value : new_value
-            };
+            if(error_string){
+                new_object[this.props.keyName]={
+                    errorString : error_string,
+                    value : new_value
+                };
+            }
+            else{
+                new_object[this.props.keyName]={
+                    errorString : null,
+                    value : new_value
+                };
+            }
+            setContext(new_object);
         }
-        setContext(new_object);
     }
 
     getValue(){
@@ -250,9 +308,33 @@ class SearchWithComboBox extends FormComponent{
 
     constructor(props){
         super(props);
-        this.state = {...this.state , addedValues:[] , queryResults:[] , loading:false}
+        this.state = {...this.state , queryResults:[] , loading:'idle'}
         this.search_input_ref = React.createRef(null);
     }
+
+
+    async loadSearchResults(){
+        if(this.props.getDataFromQuery){
+            this.setState({
+                ...this.state , loading : 'load'
+            })
+            const queryResults = await this.props.getDataFromQuery(this.search_input_ref.current.value);
+            if(queryResults.length > 0){
+                this.setState({
+                    ...this.state , queryResults , loading : 'completed' 
+                })
+            }
+            else{
+                this.setState({
+                    ...this.state, queryResults : [] , loading : 'empty'
+                })
+            }
+        }
+        else{
+            console.error("getDataFromQuery function missing");
+        }
+    }
+
 
     render(){
         if(this.state.visible){
@@ -260,54 +342,54 @@ class SearchWithComboBox extends FormComponent{
             <div className={styles['input-group']}>
                 <label>{this.props.label || 'Label not assigned'}</label>
                 <div className={styles['input-with-search']}>
-                    <input type="text" ref={this.search_input_ref} placeholder={"Start searching for names ..."}/>
-                    <i onClick={async ()=>{
-                        if(this.props.getDataFromQuery){
-                            this.setState({
-                                ...this.state , loading : true
-                            })
-                            const queryResults = await this.props.getDataFromQuery(this.search_input_ref.current.value);
-                            this.setState({
-                                ...this.state , queryResults , loading : false
-                            })
+                    <input type="text" ref={this.search_input_ref} placeholder={"Start searching for names ..."} onKeyPress={(e)=>{
+                        if(e.key === 'Enter'){
+                            this.loadSearchResults.bind(this)();
                         }
-                        else{
-                            console.error("getDataFromQuery function missing");
-                        }
-                    }}><FontAwesomeIcon icon={faSearch}></FontAwesomeIcon></i>
+                    }}/>
+                    <i onClick={this.loadSearchResults.bind(this)}><FontAwesomeIcon icon={faSearch}></FontAwesomeIcon></i>
                 </div>
-                <div className={styles['search-results']}>
+                <div className={styles['search-results']} error={this.getError() === null ? "0" : "1"}>
                     {
                     this.state.queryResults.length > 0 ? <div className={styles['search-results-list']}>
                         {this.state.queryResults.map((query_result)=>{
-                            return <span>{query_result[this.props.displayProp]}
-                            {checkForAttrMatch(this.state.addedValues , 'id' , query_result.id) ? null : <i onClick={()=>{
-                                this.setState({
-                                    ...this.state , addedValues : [...this.state.addedValues , query_result]
-                                })
+                            return <span key={query_result.id}>{query_result[this.props.displayProp]}
+                            {checkForAttrMatch(this.readContextValue() , 'id' , query_result.id) ? null : 
+                            <i onClick={()=>{
+                                this.changeValue([...this.readContextValue() , query_result])
                             }}>Add</i>
                             }</span>
                         })}
                     </div> : null
                     }
-                    {this.state.queryResults.length === 0 && this.state.loading === true ? 
+                    {this.state.queryResults.length === 0 && this.state.loading === 'load' ? 
                     <div className={styles['search-results-loading']}>
                         <FontAwesomeIcon icon={faSpinner}></FontAwesomeIcon> 
                     </div>: null
                     }
-                    {this.state.queryResults.length === 0 && this.state.loading === false ?
+                    {this.state.queryResults.length === 0 && this.state.loading === 'idle' ?
                     <div className={styles['search-results-loading']}>
                         Search Results will appear here , after you press the search button.
                     </div>
                     :null
                     }
+
+                    {this.state.queryResults.length === 0 && this.state.loading === 'empty' ?
+                    <div className={styles['search-results-loading']}>
+                        No results Found
+                    </div>
+                    :null
+                    }
+
                 </div>
+                <i className={styles['error-footer']} error={this.getError() === null ? "0" : "1"}>{this.getError()}</i>
                 <div className={styles['items-selected']}>
-                    {this.state.addedValues.map((value)=>{
-                        return <span onClick={()=>{
-                            this.setState({
-                                ...this.state , addedValues : this.state.addedValues.filter((user)=>user.id !== value.id)
-                            })
+                    {this.readContextValue().map((value)=>{
+                        return <span key={value.id} onClick={()=>{
+                            const added_array = this.readContextValue();
+                            this.changeValue(
+                                added_array.filter((user)=>user.id !== value.id)
+                            )
                         }}>{value[this.props.displayProp]}<FontAwesomeIcon icon={faTimes}></FontAwesomeIcon></span>
                     })}
                 </div>

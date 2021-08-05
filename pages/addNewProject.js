@@ -29,6 +29,11 @@ const addNewProject = (props)=>{
                     }
                     return null;
                 }}/>
+                <SimpleInputElement
+                keyName={'githubURL'}
+                label={'Link To Github Repo'}
+                isURL={true}
+                ></SimpleInputElement>
                 <RadioButtonComponent label={"Is this a personal Project ?"} keyName={'options'} options={
                     [
                         "Yes" , "No"
@@ -39,6 +44,8 @@ const addNewProject = (props)=>{
                 displayProp="username"
                 visibleToggle={['options','No']}
                 keyName="contributors"
+                type="Array"
+                isRequired={true}
                 getDataFromQuery = {async (query_string)=>{
                     const db_response = await supabase.from('users').select('*').ilike('username','%'+query_string+'%').neq('id',props.user.id);
                     if(db_response.data === null){

@@ -37,4 +37,5 @@ a {
 
 div.left-window-wrapper{
   display:flex;
+  flex-grow:2;
 }

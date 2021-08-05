@@ -1,29 +1,12 @@
-import DateSelector from "../components/DateSelector";
-import ChangesBox from "../components/ChangesBox";
-import ProjectRoleBar from "../components/ProjectRoleBar";
-import ProjectOverview from "../components/ProjectOverview";
 import styles from '../styles/dashboard.module.scss';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 import { checkForCookies } from "../libs/middleware";
+import { supabase } from '../js/supabase';
 
 export default function Home(props) {
   return (
     <div className={styles['dashboard-inner']}>
-      <DateSelector/>
-      <ProjectRoleBar/>
-      <div className={styles['dashboard-content']}>
-        <ChangesBox title={"Pending Changes"}>
-          <button className={styles['filter-btn']}>All Changes</button>
-        </ChangesBox>
-        <ChangesBox title={"New Changes"}>
-          <button className={styles['add-new-change-btn']}>
-            <FontAwesomeIcon icon={faPlusCircle}></FontAwesomeIcon>
-            &nbsp;Add New Change
-          </button>
-        </ChangesBox>
-        <ProjectOverview/>
-      </div>
     </div>
   )
 }
