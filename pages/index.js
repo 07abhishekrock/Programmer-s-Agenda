@@ -1,12 +1,20 @@
 import styles from '../styles/dashboard.module.scss';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 import { checkForCookies } from "../libs/middleware";
 import { supabase } from '../js/supabase';
+import DashboardHeaderWidget from '../components/DashboardHeaderWidget';
+import ProjectBar from '../components/ProjectBar';
+import ChangesList from '../components/ChangesList';
+import AddNewChange from '../components/AddNewChange';
 
 export default function Home(props) {
   return (
     <div className={styles['dashboard-inner']}>
+      <DashboardHeaderWidget/>
+      <ProjectBar/>
+      <div className={styles['dashboard-changes-list-wrapper']}>
+        <ChangesList/>
+        <AddNewChange/>
+      </div>
     </div>
   )
 }

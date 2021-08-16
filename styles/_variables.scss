@@ -5,3 +5,13 @@ $primary_color : #ff3b3b;
 $custom_box_shadow : 0px 0px 20px 8px rgba(0, 0, 0, 0.05);
 $gray_color : #f7f7f7;
 $black_color : #292929;
+
+@mixin removeButtonStyles() {
+    border:0px solid black; 
+    display:inline-block;
+    font-weight:inherit;
+    background-color:transparent;
+    font-family:inherit;
+    font-size:1em;
+    border-radius:0px;
+}

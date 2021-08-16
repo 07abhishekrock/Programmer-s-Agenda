@@ -1,0 +1,13 @@
+@use './variables' as variables;
+
+
+
+div.add-new-change-wrapper{
+    width:400px;
+    border:2px solid lightgray;
+    border-radius:0.5em;
+    padding:2em;
+    align-self:flex-start;
+    position:sticky;
+    top:2em;
+}

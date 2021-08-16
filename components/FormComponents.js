@@ -1,7 +1,7 @@
-import { faCaretDown, faExclamationCircle, faLeaf, faSearch, faSpinner, faTimes, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
+import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
+import { faCaretRight, faLink, faPlusCircle, faSearch, faSpinner, faTimes, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
-import { useEffect , useContext , useState } from 'react';
 import styles from '../styles/form.module.scss';
 
 const FormContext = React.createContext();
@@ -31,12 +31,12 @@ function enableOrDisableBasedOnVisibleToggle(prevProps, prevState){
     if(prevState.visible !== visible){
         if(visible === false){
             let obj = {};
-            switch(props.type){
+            switch(this.props.type){
                 case 'Array' : 
-                    obj[props.keyName] = {value : [] , error : null}
+                    obj[this.props.keyName] = {value : [] , error : null}
                     break;
                 default : 
-                    obj[props.keyName] = {value : '' , error : null}
+                    obj[this.props.keyName] = {value : '' , error : null}
                     break;
             }
             set_context({...context ,
@@ -77,7 +77,7 @@ class FormWrapper extends React.Component{
             if(child.props.keyName){
                 new_form_data[child.props.keyName] = {
                     value : value,
-                    errorString : child.props.isRequired === true ? 'This field is required' : null
+                    errorString : null
                 };
             }
             else{
@@ -93,12 +93,24 @@ class FormWrapper extends React.Component{
 
     render(){
         return (
-            <form className={styles['form']} onSubmit={(e)=>{
+            <form className={styles['form'].concat(' ', this.props.customClassName)} onSubmit={(e)=>{
                 e.preventDefault();
             }}>
             <FormContext.Provider value={[this.state.form_data , this.set_form_data.bind(this)]}>
                 {this.props.children}
-                <button>Let's get Started</button>
+                <button onClick={()=>{
+                    let new_object = {};
+                    this.props.children.forEach((child)=>{
+                        if(this.state.form_data[child.props.keyName].value.length === 0){
+                            //there is error
+                            new_object[child.props.keyName] = {
+                                value : this.state.form_data[child.props.keyName].value,
+                                errorString : child.props.isRequired === true ? 'Empty Field is not allowed' : null
+                            } 
+                        }
+                    })
+                    this.set_form_data({...this.state.form_data , ...new_object});
+                }}>{this.props.buttonText || "Let's get Started"}</button>
             </FormContext.Provider>
         </form>
     )
@@ -166,10 +178,23 @@ class FormComponent extends React.Component{
         return string;
     }
 
+
+
     changeValue(new_value){
         const [context , setContext] = this.context;
         let new_object = {...context};
-        const error_string = combineFunctions(new_value , this.props.validityChecker ? this.props.validityChecker.bind(this) : ()=>null , this.fieldIsRequiredCheck.bind(this) , this.fieldIsURLCheck.bind(this));
+        let error_string = null;
+        if(typeof new_value === 'String'){
+            error_string = combineFunctions(new_value , this.props.validityChecker ? this.props.validityChecker.bind(this) : ()=>null , this.fieldIsURLCheck.bind(this));
+        }
+        if(new_value.length === 0){
+            new_object[this.props.keyName] = {
+                errorString : null,
+                value : new_value
+            }
+            setContext(new_object);
+            return;
+        }
         if(!this.props.validityChecker){
             new_object[this.props.keyName] = {
                 errorString : error_string,
@@ -181,13 +206,13 @@ class FormComponent extends React.Component{
             if(error_string){
                 new_object[this.props.keyName]={
                     errorString : error_string,
-                    value : new_value
+                    value : new_value,
                 };
             }
             else{
                 new_object[this.props.keyName]={
                     errorString : null,
-                    value : new_value
+                    value : new_value,
                 };
             }
             setContext(new_object);
@@ -260,7 +285,79 @@ class SimpleTextAreaElement extends FormComponent{
                 return null;
             }
     }
+
 }
+
+function DynamicListItem({list_data ,  removeItem , setListData}){
+
+    return <>
+        <div className={styles['dynamic-list-input']}>
+            <input type="text" placeholder="Link Label" value={list_data.link_label} onChange={(e)=>{
+                setListData({...list_data , link_label : e.target.value});
+            }}/>
+            <input type="text" placeholder="URL comes here" value={list_data.link_url} onChange={(e)=>{
+                setListData({...list_data , link_url : e.target.value});
+            }}/>
+            <i onClick={removeItem()}><FontAwesomeIcon icon={faTrashAlt}></FontAwesomeIcon></i>
+        </div>
+    </>
+}
+
+class DynamicListComponent extends FormComponent{
+    static contextType = FormContext;
+    constructor(props){
+        super(props);
+        this.state = {...this.state , inner_error : null}
+    }
+    render(){
+        if(this.state.visible){
+            return(
+                <div>
+                    <label>{this.props.label || 'no label required'}
+                    </label>
+                    {this.readContextValue().map((list_item , index)=>{
+                        return <DynamicListItem 
+                        list_data={list_item} 
+                        removeItem={()=>{
+                            this.changeValue(this.readContextValue().filter((list_item , child_index)=>{
+                                return child_index !== index;
+                            }))
+                        }}
+                        set_list_data={
+                            (new_list_data)=>{
+                                this.changeValue(this.state[this.props.keyName].map((element , child_index)=>{
+                                    if(child_index === index){
+                                        return new_list_data;
+                                    }
+                                    return element;
+                                }))
+                            }
+                        }/>
+                    })}
+                    <i className={styles['error-footer']}>{this.state.inner_error}</i>
+                    <button className={styles['addResource']} onClick={()=>{
+                        console.log('hello button');
+                        let array = this.readContextValue();
+                        if(array.length === 0){
+                            this.changeValue([{link_url : '' , link_label : ''}]);
+                            return;
+                        }
+                        let last_added = array[array.length - 1];
+                        if(last_added.link_url === '' || last_added.link_label === ''){
+                            this.setState({...this.state , inner_error : 'Empty URL or Label String'});
+                        }
+                    }}>Add Resource</button>
+                    <i className={styles['error-footer']} error={this.getError() === null ? "0" : "1"}>{this.getError()}</i>
+                </div>
+            );
+        }
+        else{
+            return null;
+        }
+    }
+}
+
+
 
 class RadioButtonComponent extends FormComponent{
     static contextType = FormContext;
@@ -403,4 +500,4 @@ class SearchWithComboBox extends FormComponent{
 }
     
 export default FormWrapper;
-export { FormComponent , SimpleInputElement , SimpleTextAreaElement , RadioButtonComponent , SearchWithComboBox};
+export { FormComponent , SimpleInputElement , SimpleTextAreaElement , RadioButtonComponent , SearchWithComboBox , DynamicListComponent};
