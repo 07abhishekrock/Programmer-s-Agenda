@@ -130,43 +130,151 @@ div.dashboard-head-wrapper{
 
 div.project-bar{
     display:flex;
-    align-items:center;
-    justify-content:space-between;
-    margin-top:1em;
+    padding:0.3em;
+    border-radius:2em;
+    background-color:black;
+    color:white;
+    position:fixed;
+    right:1em;
+    z-index:1000;
+    bottom:2em;
+    align-items: center;
     font-size:1.1em;
-    font-weight:700;
-    &>div.filter-button{
-        display:flex;
-        align-items: center;
-        &>button{
-            @include variables.removeButtonStyles();
-            color:white;
-            background-color:black;
-            border-radius:2em;
-            font-size:0.9em;
-            padding:0.3em 1em;
-            margin-left:1em;
-        }
-    }
-    &>div.project-options{
+    box-shadow:0px 0px 25px 15px rgba(0,0,0,0.05);
+    &>span{
+        margin-right:0.5em;
         display:inline-flex;
+        width:30px;
+        height:30px;
         align-items:center;
-        &>span{
-            display:inline-block;
-            margin-right:1em;
+        justify-content: center;
+        padding:0.2em;
+        cursor:pointer;
+        &.date-filter{
+            &:focus , &:focus-within , &:target{
+                &>div.calendar{
+                    opacity:1;
+                    pointer-events:all;
+                    visibility: visible;
+                }
+            }
         }
-        & i{
-            font-style:normal;
-            display:inline-flex;
-            align-items:center;
-            margin-right:1em;
-            &>svg{
-                display:inline-block;
-                margin-right:0.3em;
+        &.search{
+            background-color:#414141;
+            border-radius:2em;
+            width:auto;
+            padding:0px;
+            &:focus-within , &:focus{
+                &>i{
+                    margin-right:0.5em;
+                }
+                &>input{
+                    width:170px;
+                }
+            }
+            &>i{
+                background-color:white;
+                color:black;
+                font-size:0.8em;
+                height:100%;
+                padding:0px 0.7em;
+                display:inline-flex;
+                align-items:center;
+                font-style:normal;
+                border-radius:1em;
+                font-weight:600;
+                &>svg{
+                    font-size:0.8em;
+                    margin-left:0.5em;
+                }
+            }
+            &>input{
+                padding:0px;
+                background-color:transparent;
+                outline:none;
+                border:0px solid black;
+                color:white;
+                font-weight:550;
+                width:0px;
+                transition:width 0.1s ease-out;
             }
         }
     }
+}
 
+span
+
+div.calendar{
+    position:absolute;
+    top:-0.5em;
+    width:100%;
+    left:0px;
+    transform:translateY(-100%);
+    background:black;
+    border-radius:0.3em;
+    box-shadow:inherit;
+    overflow:hidden;
+    padding-top:0.7em;
+    opacity:0;
+    pointer-events:none;
+    visibility: hidden;
+    &>div.calendar-head{
+        display:flex;
+        justify-content: center;
+        margin-bottom:0.8em;
+        &>span{
+            color:lightgray;
+            border-radius:2em;
+            padding:0.2em 0.4em;
+            font-size:0.9em;
+            font-weight:550;
+            margin:0px 0.3em;
+            display:inline-flex;
+            align-items:center;
+            &>svg{
+                font-size:1.3em;
+                &:hover{
+                    cursor:pointer;
+                    color:white;
+                }
+                &:first-child{
+                    margin-right:0.5em;
+                }
+                &:last-child{
+                    margin-left:0.5em;
+                }
+            }
+        }
+    }
+    &>div.calendar-grid{
+        display:grid;
+        grid-template-columns:repeat(5 , 1fr);
+        grid-gap:1em 0px;
+        justify-items:center;
+        padding:0.8em 1em;
+        background-color:#292929;
+        &>span{
+            width:30px;
+            height:30px;
+            font-size:0.75em;
+            font-weight:550;
+            align-self:center;
+            justify-self: center;
+            border:2px solid currentColor;
+            color:lightgray;
+            display:grid;
+            place-items:center;
+            border-radius:50%;
+            cursor:pointer;
+            &:hover{
+                color:white;
+            }
+            &[current="1"]{
+                background-color:white;
+                color:black;
+            }
+        }
+    }
 }
 
 div.change-block{

@@ -4,10 +4,25 @@
 
 div.add-new-change-wrapper{
     width:400px;
-    border:2px solid lightgray;
+    border:2px solid #eee;
     border-radius:0.5em;
-    padding:2em;
+    padding:0px;
     align-self:flex-start;
     position:sticky;
     top:2em;
+    &>h2{
+        background-color:#eee;
+        display:flex;
+        align-items:center;
+        justify-content: space-between;
+        padding:0.7em 1em;
+        margin:0px;
+        font-size:1.4em;
+        &>svg{
+            font-size:1.2em;
+        }
+    }
+    &>form{
+        padding:2em;
+    }
 }

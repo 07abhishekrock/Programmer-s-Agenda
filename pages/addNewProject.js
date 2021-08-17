@@ -2,7 +2,7 @@ import { useRef , useState } from "react";
 import { supabase } from "../js/supabase";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExclamationCircle, faSearch , faSpinner , faTimes } from "@fortawesome/free-solid-svg-icons";
-import { checkForCookies } from "../libs/middleware";
+import { checkForCookies, getAllProjects } from "../libs/middleware";
 import styles from '../styles/form.module.scss';
 import { useFormik } from "formik";
 import { v4 as uuidv4 } from "uuid";
@@ -22,7 +22,7 @@ const addNewProject = (props)=>{
             id : uuidv4(),
             projectName : "",
             projectDesc : "",
-            userId : "",
+            userId : props.user.id,
             // contributors : [],
             githubURL : '',
             isPersonal : 'no option',
@@ -35,9 +35,24 @@ const addNewProject = (props)=>{
             githubURL : yup.string().url(),
             isPersonal : yup.string().required().oneOf(['Yes' , 'No'] , 'Please Select an Option')
         }),
-        onSubmit : (values)=>{
-                alert(JSON.stringify(values));
+        onSubmit : async ({id , projectName , projectDesc , userId , githubURL , isPersonal})=>{
+            const {data , error} = await supabase.from('projects').insert({
+                id,
+                projectName,
+                userId,
+                contributors : [],
+                githubURL,
+                isPersonal,
+            });
+            if(error){
+                alert('an error occured');
             }
+            else if(!error && data){
+                alert('submitted succesfully' + JSON.stringify(data));
+            }
+        },
+        validateOnBlur : false,
+        validateOnChange : false
     })
 
     const loadSearchResults = async ()=>{
@@ -78,9 +93,9 @@ const addNewProject = (props)=>{
         <div className={styles['form-wrapper']}>
             <h2>Add New Project</h2>
             <form className={styles['form']} onSubmit={
-                (e)=>{
+                async (e)=>{
                     e.preventDefault();
-                    form.submitForm();
+                    await form.submitForm();
                 }
             }>
                 <div>
@@ -180,7 +195,7 @@ const addNewProject = (props)=>{
                 </div>} */}
                 <button>Let's Get Started</button>
             </form> 
-            {/* <div style={{width : '100%'}}>{JSON.stringify(form.values)}</div> */}
+            <div style={{width : '100%'}}>{JSON.stringify(form.errors)}</div>
 
         </div>
     );
@@ -188,17 +203,12 @@ const addNewProject = (props)=>{
 
 export async function getServerSideProps(context){
     const [cookies_found , data] = checkForCookies(context.req);   
-    const db_response = await supabase.from('projects').select('userId').eq('userId',data.id);
-
-    let projects = [];
-    if(projects !== null){
-        projects = db_response.data;
-    }
+    const project_data = await getAllProjects(data);
 
     if(cookies_found){
         return (
             {
-                props : {user : data , projects : projects}
+                props : {user : data , projects : project_data}
             }
         )
     }

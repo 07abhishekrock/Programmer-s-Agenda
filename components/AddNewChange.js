@@ -1,4 +1,4 @@
-import { faCheckCircle, faExclamationCircle, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
+import { faExclamationCircle, faPlus, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import styles from '../styles/add_new_change.module.scss';
 import form_styles from '../styles/form.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -23,16 +23,9 @@ const AddNewChange = ()=>{
         initialValues : {
             'changeTitle' : '',
             'changeDesc' : '',
-            'resources' : [
-                {
-                    label : 'New Resource',
-                    url : '',
-                    resource_id : uuidv4(),
-                    inView : true
-                }
-            ],
+            'resources' : [],
         },
-        initialStatus : {resources : 'Fill In Values'},
+        initialStatus : {},
         onSubmit : (values)=>console.log(values)
     });
 
@@ -111,6 +104,7 @@ const AddNewChange = ()=>{
 
 
     return <div className={styles["add-new-change-wrapper"]}>
+        <h2>Create New Change <FontAwesomeIcon icon={faPlusCircle}/></h2>
         <form className={form_styles['form'] + ' ' + form_styles['add-new-change-form']}>
             <div>
                 <label>Change Title</label>
@@ -139,7 +133,7 @@ const AddNewChange = ()=>{
                 {
                     form.values.resources.map((resource)=>{
                         if(resource.inView === true){
-                            return <div className={form_styles['dynamic-list-unit']}>
+                            return <div key={resource.resource_id} className={form_styles['dynamic-list-unit']}>
                                 <div className={form_styles['dynamic-list-input-group']}>
                                     <label>Label</label>
                                     <input type="text" value={resource.label} onChange={(e)=>{
@@ -171,7 +165,7 @@ const AddNewChange = ()=>{
                 }
 
                 <button 
-                disabled={!form.status.resources ? "true" : undefined} 
+                disabled={!form.status.resources ? "1" : undefined} 
                 className={form_styles['seperate']}
                 animate={resource_error ? "1" : "0"}
                 style={{color : 'red'}}>
@@ -184,7 +178,7 @@ const AddNewChange = ()=>{
                     appendEmptyResource();
                 }}
                 className={form_styles['seperate']} 
-                disabled={form.status.resources ? "true" : undefined}
+                disabled={form.status.resources ? "1" : undefined}
                 >Add One More</button>
                 </div>
             </div>
